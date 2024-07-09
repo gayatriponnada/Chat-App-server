@@ -13,7 +13,7 @@ const salt = 10;
 app.use(express.json());
 
 app.post("/sign-up", async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, username, gender, password } = req.body;
   const hashed = await bcrypt.hash(password, salt);
   if (!email) {
     return res.status(400).json({
@@ -23,6 +23,11 @@ app.post("/sign-up", async (req, res) => {
   if (!username) {
     return res.status(400).json({
       message: "Username should present",
+    });
+  }
+  if (!gender) {
+    return res.status(400).json({
+      message: "Gender should present",
     });
   }
   if (!password) {
@@ -44,6 +49,7 @@ app.post("/sign-up", async (req, res) => {
     data: {
       email,
       username,
+      gender,
       password: hashed,
     },
   });
@@ -70,7 +76,7 @@ app.get("/all-users", authenticationToken, async (req, res) => {
         id,
       },
     },
-    select: { email: true, username: true },
+    select: { email: true, username: true, gender: true },
   });
   return res.status(200).json({ users, user: req.user });
 });
